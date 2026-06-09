@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ai-automation-engine:
     build: .
@@ -7,6 +5,5 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - OPENAI_API_KEY=your_placeholder_key
-      - WHATSAPP_TOKEN=your_placeholder_token
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # We will set this securely on your machine
     restart: always
