@@ -8,7 +8,10 @@ app = FastAPI(title="AI Real Estate Automation Engine")
 
 # Initialize the OpenAI Client
 # It automatically looks for the OPENAI_API_KEY environment variable
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"), 
+    base_url="https://api.groq.com/openai/v1"
+)
 
 class WhatsAppMessage(BaseModel):
     sender: str
@@ -41,7 +44,7 @@ async def receive_whatsapp_message(request: Request):
     try:
         # Call OpenAI to generate a dynamic response based on the lead's message
         response = await client.chat.completions.create(
-            model="gpt-4o", # You can change this to gpt-3.5-turbo to save costs
+            model="llama-3.3-70b-versatile", # The free Llama model on Groq
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_message}
