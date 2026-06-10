@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  ai-automation-engine:
+    build: .
+    container_name: real_estate_ai_backend
+    ports:
+      - "8000:8000"
+    environment:
+      # This pulls the key dynamically from Jenkins or your local .env file
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      # Maps the local static folder to the container to host audio files
+      - ./static:/app/static

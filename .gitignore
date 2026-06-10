@@ -1,0 +1,13 @@
+# Environments
+.env
+__pycache__/
+
+# Temporary Audio Files
+static/
+*.mp3
+*.ogg
+*.wav
+
+# Virtual environments
+venv/
+env/

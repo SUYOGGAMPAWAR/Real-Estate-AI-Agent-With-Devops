@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME       = 'real-estate-ai-backend'
-        // This securely grabs the secret from Jenkins and maps it to a variable
-        OPENAI_API_KEY = credentials('openai-api-key') 
+        // Securely pulls the Groq API key from Jenkins Vault
+        OPENAI_API_KEY = credentials('openai-api-key')
     }
 
     stages {
@@ -13,34 +12,35 @@ pipeline {
                 checkout scm
             }
         }
-
+        
         stage('2. Code Analysis & Test') {
             steps {
+                echo 'Checking Python syntax...'
                 sh 'python3 -m compileall .'
             }
         }
-
+        
         stage('3. Build Docker Image') {
             steps {
-                sh "docker build -t ${APP_NAME}:${BUILD_NUMBER} ."
-                sh "docker tag ${APP_NAME}:${BUILD_NUMBER} ${APP_NAME}:latest"
+                echo 'Building updated Docker image...'
+                sh 'docker build -t real-estate-ai-backend:latest .'
             }
         }
-
+        
         stage('4. Local Cleanup') {
             steps {
+                echo 'Removing old dangling images...'
                 sh 'docker image prune -f'
             }
         }
-
+        
         stage('5. Deploy Locally') {
             steps {
-                echo "Deploying container with active AI brain..."
-                // Docker Compose automatically inherits variables from the environment
-                sh """
-                    docker-compose down || true
-                    docker-compose up -d --build
-                """
+                echo 'Deploying container with active AI brain...'
+                // Force remove any conflicting container safely
+                sh 'docker rm -f real_estate_ai_backend || true'
+                sh 'docker-compose down'
+                sh 'docker-compose up -d --build'
             }
         }
     }

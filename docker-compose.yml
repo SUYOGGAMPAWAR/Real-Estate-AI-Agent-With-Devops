@@ -1,9 +1,0 @@
-services:
-  ai-automation-engine:
-    build: .
-    container_name: real_estate_ai_backend
-    ports:
-      - "8000:8000"
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY} # We will set this securely on your machine
-    restart: always
