@@ -52,9 +52,9 @@ async def receive_whatsapp_message(
             print(f"Downloading incoming voice note from Twilio...")
             audio_filepath = f"static/incoming_{uuid.uuid4().hex}.ogg"
             
-            # Download the file from Twilio
+            # THE FIX: Added follow_redirects=True so we download the actual audio!
             async with httpx.AsyncClient() as http_client:
-                audio_response = await http_client.get(MediaUrl0)
+                audio_response = await http_client.get(MediaUrl0, follow_redirects=True)
                 with open(audio_filepath, "wb") as f:
                     f.write(audio_response.content)
             
@@ -62,13 +62,13 @@ async def receive_whatsapp_message(
             print("Transcribing audio...")
             with open(audio_filepath, "rb") as f:
                 transcription = await client.audio.transcriptions.create(
-                    file=(audio_filepath, f.read()),
+                    file=f,  # THE FIX: Passing the file object directly is much safer
                     model="whisper-large-v3"
                 )
             # Replace the empty Body text with the transcribed speech!
             user_message = transcription.text
             print(f"Transcribed Text: {user_message}")
-
+            
         # 2. Get the AI's text response using Llama 3
         response = await client.chat.completions.create(
             model="llama-3.3-70b-versatile",
